@@ -1,6 +1,6 @@
 // Your web app's Firebase configuration
 import {initializeApp} from 'firebase/app'
-import {getFirestore, collection, getDocs} from 'firebase/firestore'
+import {getFirestore, collection,addDoc,deleteDoc,doc,onSnapshot} from 'firebase/firestore'
 const firebaseConfig = {
     apiKey: "AIzaSyAwfhkeRJPoo_tLgrixn7OcssMPUaaAcJk",
     authDomain: "testevanilla.firebaseapp.com",
@@ -19,15 +19,34 @@ const firebaseConfig = {
   //collection ref
   const colRef = collection(db,'tasks')
 
-  //get data col
-  getDocs(colRef)
-    .then((snapshot)=>{
+  //real time get data col
+    onSnapshot(colRef,(snapshot)=>{
         let tasks =[]
         snapshot.forEach((doc)=>{
             tasks.push({ ...doc.data(), id: doc.id})
         })
         console.log(tasks)
-    .catch(err => {
-        console.log(err.message)
+
     })
+
+    // add doc
+    const addBookForm =  document.querySelector('.add')
+    addBookForm.addEventListener('submit',(e) => {
+        e.preventDefault()
+        addDoc(colRef,{
+            title: addBookForm.title.value,
+            description: addBookForm.description.value
+        }).then(()=>{
+            addBookForm.reset()
+        })
+    })
+
+    // delete doc
+    const deleteBookForm =  document.querySelector('.delete')
+    deleteBookForm.addEventListener('submit',(e) => {
+        e.preventDefault()
+        const docref = doc(db,'tasks',deleteBookForm.id.value)
+        deleteDoc(docref).then(()=>{
+            deleteBookForm.reset()
+        })
     })
