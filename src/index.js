@@ -1,6 +1,6 @@
 // Your web app's Firebase configuration
 import {initializeApp} from 'firebase/app'
-import {getFirestore, collection,addDoc,deleteDoc,doc,onSnapshot} from 'firebase/firestore'
+import {getFirestore, collection,addDoc,deleteDoc,doc,onSnapshot,query,where,orderBy} from 'firebase/firestore'
 const firebaseConfig = {
     apiKey: "AIzaSyAwfhkeRJPoo_tLgrixn7OcssMPUaaAcJk",
     authDomain: "testevanilla.firebaseapp.com",
@@ -19,8 +19,11 @@ const firebaseConfig = {
   //collection ref
   const colRef = collection(db,'tasks')
 
+  //queries
+  const q = query(colRef,orderBy('title'))
+
   //real time get data col
-    onSnapshot(colRef,(snapshot)=>{
+    onSnapshot(q,(snapshot)=>{
         let tasks =[]
         snapshot.forEach((doc)=>{
             tasks.push({ ...doc.data(), id: doc.id})
